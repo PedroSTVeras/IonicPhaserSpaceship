@@ -7,9 +7,12 @@ import * as Phaser from "phaser-ce";
 
 import{ Player } from "../../app/Player";
 import { Wave } from "../../app/Wave";
+import { Bomb } from '../../app/Bomb';
 
 export let game: Phaser.Game;
 export let player: Player;
+
+let bomb: Bomb;
 
 var score = 0;
 var scoreString = '';
@@ -50,7 +53,9 @@ export class HomePage {
     game.load.spritesheet('Player', 'assets/ships2/ship2.png',41,41,6);
     game.load.spritesheet('Spin', 'assets/ships2/ship3.png',41,41,6);
     game.load.spritesheet('UFO', 'assets/ships2/ship1.png',41,41,6);//32,32,4);
+    game.load.spritesheet('Tank', 'assets/ships2/ship4.png',41,41,6);
     game.load.spritesheet('button', 'assets/sprites/btn.png', 256, 80);
+    game.load.spritesheet('bomb', 'assets/sprites/bomb.png',41,41,6);
   }
 
   create() {
@@ -63,7 +68,7 @@ export class HomePage {
 
     //New playe/wave
     player = new Player();
-    this.wave = new Wave(game.rnd.integerInRange(2,5),game.rnd.integerInRange(2,5));
+    this.wave = new Wave(game.rnd.integerInRange(2,4),game.rnd.integerInRange(2,4),game.rnd.integerInRange(2,4));
   
     //GameOver
     button = game.add.button(game.world.centerX - 130, game.world.centerY, 'button', actionOnClick, this, 2, 1, 0);
@@ -91,6 +96,8 @@ export class HomePage {
     explosions.createMultiple(30, 'explode');
     explosions.forEach(setupExplosion, this);
     
+    bomb = new Bomb(0, 700, "bomb");
+
   }
 
   update() {
@@ -100,9 +107,9 @@ export class HomePage {
 
     //Create New Wave
     if (this.wave.over){
-      var balance = score/500;
+      var balance = score/1250;
       if (balance < 1) balance = 1;
-      this.wave = new Wave (game.rnd.integerInRange(2 * balance, 5 * balance), game.rnd.integerInRange(2 * balance, 5 * balance));
+      this.wave = new Wave (game.rnd.integerInRange(2 * balance, 4 * balance), game.rnd.integerInRange(2 * balance, 4 * balance),game.rnd.integerInRange(2 * balance, 4 * balance));
     }
 
     //Update Wave
@@ -126,7 +133,12 @@ export class HomePage {
       if(game.physics.arcade.overlap(player.sprite, this.wave.enemies[index].sprite, enemyHitsPlayer, null, this)){
         this.wave.enemies[index].alive = false;
       }
-    
+
+    }
+
+    if (bomb != null){
+      game.physics.arcade.overlap(player.sprite, bomb.sprite, touchBomb, null, this)
+      bomb.Update();
     }
 
   }
@@ -136,6 +148,7 @@ export class HomePage {
     //game.debug.pointer(game.input.pointer1);
     game.scale.pageAlignHorizontally = true;
   } 
+  
 }
 
 function actionOnClick () {
@@ -145,7 +158,7 @@ function actionOnClick () {
   player.sprite.position.y = 600;
   //Wave
   this.wave.KillAll();
-  this.wave = new Wave(game.rnd.integerInRange(2,5),game.rnd.integerInRange(2,5));
+  this.wave = new Wave(game.rnd.integerInRange(2,4),game.rnd.integerInRange(2,4),game.rnd.integerInRange(2,4));
   //Score
   score = 0;
   scoreText.text = scoreString + score;
@@ -162,9 +175,7 @@ function actionOnClick () {
   }
 }
 
-
 function setupExplosion (exp) {
-
   exp.anchor.x = 0.5;
   exp.anchor.y = 0.5;
   exp.animations.add('explode');
@@ -172,6 +183,13 @@ function setupExplosion (exp) {
 }
 
 function bulletHitsEnemy(bullet, enemy) {
+  
+  console.log(bomb.hasBomb);
+  if (game.rnd.integerInRange(1,10) == 1 && bomb.hasBomb == false){    
+    console.log("Bomb spawned");
+    bomb = new Bomb(enemy.body.x, enemy.body.y, "bomb");
+    bomb.hasBomb = true;
+  }
 
   bullet.kill();
   enemy.kill();
@@ -186,7 +204,6 @@ function bulletHitsEnemy(bullet, enemy) {
 }
 
 function enemyHitsPlayer(p_player,enemy) {
-
   enemy.kill();
   player.health -= 1;
 
@@ -199,5 +216,27 @@ function enemyHitsPlayer(p_player,enemy) {
   var explosion = explosions.getFirstExists(false);
   explosion.reset(p_player.body.x, p_player.body.y);
   explosion.play('explode', 30, false, true);
+  
+}
+
+function touchBomb(p_player,b_bomb) {
+  
+  bomb.sprite.kill();
+  bomb.hasBomb = false;
+  
+  for (let index = 0; index < this.wave.enemies.length; index++) {
+    score += 20;
+    scoreText.text = scoreString + score;
+  
+    var explosion = explosions.getFirstExists(false);
+    //explosion.reset(this.wave.enemies[index].sprite.body.x, this.wave.enemies[index].sprite.body.y);
+    explosion.play('explode', 30, false, true);         
+    
+    this.wave.enemies[index].sprite.kill(); 
+   
+  }
+  var balance = score/1250;
+  if (balance < 1) balance = 1;
+  this.wave = new Wave (game.rnd.integerInRange(2 * balance, 4 * balance), game.rnd.integerInRange(2 * balance, 4 * balance),game.rnd.integerInRange(2 * balance, 4 * balance));
   
 }

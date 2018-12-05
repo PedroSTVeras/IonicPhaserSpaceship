@@ -45,13 +45,13 @@ export class Player{
         this.mobile = true;        
 
         if (!this.mobile){
-        //Buttons
-        this.cursors = game.input.keyboard.createCursorKeys();
-        this.w = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        this.a = game.input.keyboard.addKey(Phaser.Keyboard.A);
-        this.s = game.input.keyboard.addKey(Phaser.Keyboard.S);
-        this.d = game.input.keyboard.addKey(Phaser.Keyboard.D);
-        this.fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            //Buttons
+            this.cursors = game.input.keyboard.createCursorKeys();
+            this.w = game.input.keyboard.addKey(Phaser.Keyboard.W);
+            this.a = game.input.keyboard.addKey(Phaser.Keyboard.A);
+            this.s = game.input.keyboard.addKey(Phaser.Keyboard.S);
+            this.d = game.input.keyboard.addKey(Phaser.Keyboard.D);
+            this.fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         }
 
     }

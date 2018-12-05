@@ -1,5 +1,4 @@
 import * as Phaser from "phaser-ce";
-//import { game } from "./app.component";
 import { Enemy } from "./Enemy";
 
 export class SpinEnemy extends Enemy{
