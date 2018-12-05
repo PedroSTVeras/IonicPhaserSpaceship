@@ -17,6 +17,8 @@ export class Player{
     s: any;
     d: any;
     
+    mobile: boolean;
+
     constructor(){
         //Create sprite
         this.sprite = game.add.sprite(180, 600, 'Player');
@@ -40,6 +42,9 @@ export class Player{
         this.bullets.setAll('checkWorldBounds', true);
         this.bulletTime = 0;
 
+        this.mobile = true;        
+
+        if (!this.mobile){
         //Buttons
         this.cursors = game.input.keyboard.createCursorKeys();
         this.w = game.input.keyboard.addKey(Phaser.Keyboard.W);
@@ -47,29 +52,39 @@ export class Player{
         this.s = game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.d = game.input.keyboard.addKey(Phaser.Keyboard.D);
         this.fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        }
+
     }
 
     Update(){
         this.sprite.body.velocity.setTo(0, 0);
         if (player.health >0){   
-            //Move
-            if (this.cursors.left.isDown || this.a.isDown) {
-                this.sprite.body.velocity.x = -200;
+            if (this.mobile){
+                //Mobile controls
+                if (game.input.pointer1.isDown){
+                    game.physics.arcade.moveToObject(this.sprite, game.input.pointer1, 175);
+                    this.fireBullet(this.sprite.x, this.sprite.y, 2);
+                }
             }
-            else if (this.cursors.right.isDown || this.d.isDown) {
-                this.sprite.body.velocity.x = 200;
-            }
-            if (this.cursors.up.isDown || this.w.isDown) {
-                this.sprite.body.velocity.y = -200;
-            }
-            else if (this.cursors.down.isDown || this.s.isDown) {
-                this.sprite.body.velocity.y = 200;
-            }
-
-            //Firing
-            if (this.fireButton.isDown) {
-                this.fireBullet(this.sprite.x, this.sprite.y, 2);
-            }            
+            else{
+                //Move
+                if (this.cursors.left.isDown || this.a.isDown) {
+                    this.sprite.body.velocity.x = -200;
+                }
+                else if (this.cursors.right.isDown || this.d.isDown) {
+                    this.sprite.body.velocity.x = 200;
+                }
+                if (this.cursors.up.isDown || this.w.isDown) {
+                    this.sprite.body.velocity.y = -200;
+                }
+                else if (this.cursors.down.isDown || this.s.isDown) {
+                    this.sprite.body.velocity.y = 200;
+                }
+                //Firing
+                if (this.fireButton.isDown) {
+                    this.fireBullet(this.sprite.x, this.sprite.y, 2);
+                } 
+            }       
         }
     }
 

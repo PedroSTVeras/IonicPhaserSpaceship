@@ -66,7 +66,7 @@ export class HomePage {
     // Score
     scoreString = 'Score: ';
     scoreText = game.add.text(160, 10, scoreString + score, { font: '34px Arial', fill: '#ff1f' });
-
+    
     // Lives
     lives = game.add.group();
     game.add.text(10, 10, 'Lives: ', { font: '34px Arial', fill: '#ff1f' });
@@ -150,6 +150,8 @@ export class HomePage {
   }
 
   render() {   
+    //game.debug.pointer(game.input.mousePointer);
+    //game.debug.pointer(game.input.pointer1);
     game.scale.pageAlignHorizontally = true;
   } 
 }
