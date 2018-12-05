@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController,Platform } from 'ionic-angular';
+import { DeviceMotion,DeviceMotionAccelerationData,DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion';
+
 
 //import "pixi";
 //import "p2";
@@ -24,6 +26,10 @@ var r;
 var explosions;
 var button;
 
+export let x: any = 0;
+export let y: any = 0;
+export let z: any = 0;
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -38,12 +44,38 @@ export class HomePage {
   width: number;
   height: number;
 
+  id: any;
+
   //Create Game
-  constructor(){
+  constructor(platform: Platform, public deviceMotion: DeviceMotion){
     this.width = 360;//1920 * 0.7;
     this.height = 640;//1080 * 0.6;
     game = new Phaser.Game(this.width, this.height, Phaser.CANVAS, 'phaser-example', 
     { preload: this.preload, create: this.create, update: this.update, render: this.render });
+  }
+
+
+  Start() {
+    try {
+      var option: DeviceMotionAccelerometerOptions =
+      {
+        frequency: 100
+      }
+      this.id = this.deviceMotion.watchAcceleration(option).subscribe((acc: DeviceMotionAccelerationData) => {
+        x = acc.x;
+        y = acc.y;
+        z = acc.z;
+        
+      }
+      );
+    } catch (err) {
+      alert('Error ' + err);
+    }
+  }
+
+  Stop() {
+    this.id.unsubscribe();
+
   }
 
   preload() {
@@ -184,9 +216,9 @@ function setupExplosion (exp) {
 
 function bulletHitsEnemy(bullet, enemy) {
   
-  console.log(bomb.hasBomb);
+  //console.log(bomb.hasBomb);
   if (game.rnd.integerInRange(1,10) == 1 && bomb.hasBomb == false){    
-    console.log("Bomb spawned");
+    //console.log("Bomb spawned");
     bomb = new Bomb(enemy.body.x, enemy.body.y, "bomb");
     bomb.hasBomb = true;
   }

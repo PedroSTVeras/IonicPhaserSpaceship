@@ -1,5 +1,7 @@
 {
   "name": "GrauB",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "ionic-angular"
 }
