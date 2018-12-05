@@ -22,7 +22,7 @@ export class Player{
     constructor(){
         //Create sprite
         this.sprite = game.add.sprite(180, 600, 'Player');
-        //this.sprite.angle = -270;
+        this.sprite.angle = 180;
         this.sprite.animations.add('walk');
         this.sprite.animations.play('walk', 30, true);
         this.sprite.anchor.setTo(0.5, 0.5);

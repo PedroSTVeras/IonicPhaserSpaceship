@@ -19,6 +19,8 @@ var live;
 var gameOverText;
 var r;
 var explosions;
+var button;
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -43,11 +45,12 @@ export class HomePage {
 
   preload() {
     game.load.image('bullet', 'assets/sprites/bullet.png');
-    game.load.spritesheet('explode', 'assets/sprites/explode.png', 128, 128);
+    game.load.spritesheet('explode', 'assets/ships2/explosion.png', 60, 60,10);
     game.load.image('Starfield', 'assets/sprites/starfield.png');
-    game.load.spritesheet('Player', 'assets/Ships/Lightning.png',32,32,4);
-    game.load.spritesheet('Spin', 'assets/Ships/Ninja.png',32,32,4);
-    game.load.spritesheet('UFO', 'assets/Ships/Saboteur.png',32,32,4);
+    game.load.spritesheet('Player', 'assets/ships2/ship2.png',41,41,6);
+    game.load.spritesheet('Spin', 'assets/ships2/ship3.png',41,41,6);
+    game.load.spritesheet('UFO', 'assets/ships2/ship1.png',41,41,6);//32,32,4);
+    game.load.spritesheet('button', 'assets/sprites/btn.png', 256, 80);
   }
 
   create() {
@@ -56,36 +59,38 @@ export class HomePage {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     // Background
-    this.starfield = game.add.tileSprite(0, 0, 1920,1080, 'Starfield');
-
-    //GameOver
-    gameOverText = game.add.text(game.world.centerX, game.world.centerY, "You Lose!!! \n Press 'R' to restart", { font: '34px Arial', fill: '#ff0044' });
-    gameOverText.anchor.setTo(0.5, 0.5);
-    gameOverText.visible = false;
-
-    // Score
-    scoreString = 'Score: ';
-    scoreText = game.add.text(160, 10, scoreString + score, { font: '34px Arial', fill: '#ff1f' });
-    
-    // Lives
-    lives = game.add.group();
-    game.add.text(10, 10, 'Lives: ', { font: '34px Arial', fill: '#ff1f' });
-    for (var i = 0; i < 3; i++) {
-      var ship = lives.create(85 + (-30 * i), 60, 'Player');
-      ship.anchor.setTo(0.5, 0.5);
-      ship.angle = 90;
-      ship.alpha = 0.7;
-    }
+    this.starfield = game.add.tileSprite(0, 0, 600,900, 'Starfield');
 
     //New playe/wave
     player = new Player();
     this.wave = new Wave(game.rnd.integerInRange(2,5),game.rnd.integerInRange(2,5));
   
+    //GameOver
+    button = game.add.button(game.world.centerX - 130, game.world.centerY, 'button', actionOnClick, this, 2, 1, 0);
+    button.visible = false;
+    gameOverText = game.add.text(game.world.centerX, game.world.centerY + 42.5, "Restart");
+    gameOverText.anchor.setTo(0.5, 0.5);
+    gameOverText.visible = false;
+
+    // Score
+    scoreString = '';//'Score: ';
+    scoreText = game.add.text(10, 5, scoreString + score, { font: '34px Arial', fill: '#ff1f' });
+    
+    // Lives
+    lives = game.add.group();
+    //game.add.text(10, 10, 'Lives: ', { font: '34px Arial', fill: '#ff1f' });
+    for (var i = 0; i < 3; i++) {
+      var ship = lives.create(280 + (30 * i), 25, 'Player');
+      ship.anchor.setTo(0.5, 0.5);
+      //ship.angle = 90;
+      ship.alpha = 0.7;
+    }
+
     //Explosion
     explosions = game.add.group();
     explosions.createMultiple(30, 'explode');
     explosions.forEach(setupExplosion, this);
-
+    
   }
 
   update() {
@@ -107,32 +112,9 @@ export class HomePage {
     }
     //Game Over
     else{
+      button.visible = true;
       gameOverText.visible = true;
       this.wave.Stop();
-
-      //Restart
-      if (r.isDown){
-        //Player
-        player.health = 3;
-        player.sprite.position.x = 180;
-        player.sprite.position.y = 600;
-        //Wave
-        this.wave.KillAll();
-        this.wave = new Wave(game.rnd.integerInRange(2,5),game.rnd.integerInRange(2,5));
-        //Score
-        score = 0;
-        scoreText.text = scoreString + score;
-        //Text
-        gameOverText.visible = false;
-        //Lives
-        lives = game.add.group(); 
-        for (var i = 0; i < 3; i++) {
-          var ship = lives.create(85 + (-30 * i), 60, 'Player');
-          ship.anchor.setTo(0.5, 0.5);
-          ship.angle = 90;
-          ship.alpha = 0.7;
-        }
-      }
     }
 
     //Collision
@@ -155,6 +137,31 @@ export class HomePage {
     game.scale.pageAlignHorizontally = true;
   } 
 }
+
+function actionOnClick () {
+  //Player
+  player.health = 3;
+  player.sprite.position.x = 180;
+  player.sprite.position.y = 600;
+  //Wave
+  this.wave.KillAll();
+  this.wave = new Wave(game.rnd.integerInRange(2,5),game.rnd.integerInRange(2,5));
+  //Score
+  score = 0;
+  scoreText.text = scoreString + score;
+  //Text
+  gameOverText.visible = false;
+  button.visible = false;
+  //Lives
+  lives = game.add.group(); 
+  for (var i = 0; i < 3; i++) {
+    var ship = lives.create(280 + (30 * i), 25, 'Player');
+    ship.anchor.setTo(0.5, 0.5);
+    //ship.angle = 90;
+    ship.alpha = 0.7;
+  }
+}
+
 
 function setupExplosion (exp) {
 

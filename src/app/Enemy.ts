@@ -16,7 +16,7 @@ export class Enemy{
         this.sprite.animations.play('walk', 30, true);
         this.sprite.anchor.setTo(0.5, 0.5);
         game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
-        this.sprite.angle = 180;//270;
+        //this.sprite.angle = 180;//270;
 
         this.alive = true;
         this.health = 3;

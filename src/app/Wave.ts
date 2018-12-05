@@ -15,10 +15,10 @@ export class Wave{
         this.enemies = [];
 
         for (let index = 0; index < spin; index++) {
-            this.enemies[index] = new SpinEnemy(game.rnd.integerInRange(10,350),game.rnd.integerInRange(80,120), 'Spin');  
+            this.enemies[index] = new SpinEnemy(game.rnd.integerInRange(10,350),game.rnd.integerInRange(-20,-120), 'Spin');  
         }
         for (let index = spin; index < spin + ufo; index++) {
-            this.enemies[index] = new UFOEnemy(game.rnd.integerInRange(10,350),game.rnd.integerInRange(80,120), 'UFO');  
+            this.enemies[index] = new UFOEnemy(game.rnd.integerInRange(10,350),game.rnd.integerInRange(-20,-120), 'UFO');  
         }
         
     }
